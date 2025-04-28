@@ -8,9 +8,11 @@ import { theme } from '@/constants/theme';
 import Icon from '@/assets/icons';
 import Avatar from '@/components/Avatar';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { useAuth } from '@/context/AuthContext';
 
 const Profile = () => {
   const router = useRouter();
+  const { logout } = useAuth();
 
   const handleLogout = () => {
     Alert.alert('Confirm', 'Are you sure you want to logout?', [
@@ -21,7 +23,10 @@ const Profile = () => {
       },
       {
         text: 'Logout',
-        onPress: () => router.push('/login'),
+        onPress: async () => {
+          await logout();
+          router.push('/login');
+        },
         style: 'destructive',
       },
     ]);

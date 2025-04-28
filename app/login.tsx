@@ -8,31 +8,41 @@ import { wp, hp } from '@/helper/common';
 import { theme } from '../constants/theme';
 import Input from '@/components/input';
 import Button from '@/components/Button';
+import { useAuth } from '@/context/AuthContext';
+import { ENDPOINTS } from '@/helper/api';
 
 const Login = () => {
     const router = useRouter();
+    const { login, user } = useAuth();
     const emailRef = useRef(null);
     const passwordRef = useRef(null);
     const [loading, setLoading] = useState(false);
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
+    const [email, setEmail] = useState('volunteer@example.com');
+    const [password, setPassword] = useState('password123');
 
-    const handleLogin = () => {
+    const handleLogin = async () => {
         setLoading(true);
-        setTimeout(() => {
+        console.log(`Login attempt - Email: ${email}, Password: ${password}`);
+        console.log(`API Endpoint: ${ENDPOINTS.LOGIN}`);
+        
+        try {
+            const success = await login(email, password);
+            
+            if (success) {
+                Alert.alert('Success', 'Login successful!');
+                
+                // Navigate based on user role
+                if (user?.role === 'organization') {
+                    router.push('/home2');
+                } else {
+                    router.push('/home');
+                }
+            }
+        } catch (error) {
+            console.error('Login error:', error);
+        } finally {
             setLoading(false);
-            if (email === 'love' && password === 'love') {
-                Alert.alert('Success', 'Login successful!');
-                router.push('/home'); // Navigate to the home page
-            }
-            else if(email==='kumar' && password==='kumar'){
-                Alert.alert('Success', 'Login successful!');
-                router.push('/home2');
-            } 
-            else {
-                Alert.alert('Error', 'Invalid email or password');
-            }
-        }, 2000);
+        }
     };
 
     const onSubmit = () => {
@@ -62,6 +72,7 @@ const Login = () => {
                         ref={emailRef}
                         icon={<Icon name="mail" size={26} strokeWidth={1.6} />}
                         placeholder="Enter your email"
+                        value={email}
                         onChangeText={value => setEmail(value)}  
                     />
                     <Input
@@ -69,6 +80,7 @@ const Login = () => {
                         icon={<Icon name="lock" size={26} strokeWidth={1.6} />}
                         placeholder="Enter your password"
                         secureTextEntry
+                        value={password}
                         onChangeText={value => setPassword(value)}  
                     />
 
@@ -79,7 +91,7 @@ const Login = () => {
                 <View style={styles.footer}>
                     <Text style={styles.footerText}>
                         Don't have an account? 
-                        <Pressable>
+                        <Pressable onPress={() => router.push('/signup')}>
                             <Text style={[styles.footerText, { color: theme.colors.primaryDark, fontWeight: theme.fonts.semibold }]}>SignUp</Text>
                         </Pressable>
                     </Text>

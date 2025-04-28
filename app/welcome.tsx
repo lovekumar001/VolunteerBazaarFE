@@ -40,6 +40,16 @@ const Welcome = () => {
                             </Text>
                         </Pressable>
                     </View>
+                    
+                    {/* Debug button for API testing */}
+                    <Pressable 
+                        onPress={() => router.push('/testapi')}
+                        style={{ marginTop: 20, alignItems: 'center' }}
+                    >
+                        <Text style={{ color: theme.colors.gray, fontSize: 14 }}>
+                            Test API Connection
+                        </Text>
+                    </Pressable>
                 </View>
             </View>
         </ScreenWrapper>
